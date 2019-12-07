@@ -1,0 +1,35 @@
+RecipeSerializer():
+    id = IntegerField(label='ID', read_only=True)
+    name = CharField(max_length=100)
+    author = UserSerializer():
+        nickName = CharField(label='NickName', max_length=100, validators=[<UniqueValidator(queryset=User.objects.all())>])
+    photo = CharField(allow_blank=True, allow_null=True, max_length=200, required=False)
+    video_url = CharField(allow_blank=True, allow_null=True, max_length=100, required=False)
+    category = NestedSerializer(many=True, read_only=True):
+        id = IntegerField(label='ID', read_only=True)
+        name = CharField(max_length=100, validators=[<UniqueValidator(queryset=Category.objects.all())>])
+        logo = CharField(allow_blank=True, allow_null=True, max_length=200, required=False)
+    ingredients = IngredientRequiredSerializer(many=True, source='ingredientrequired_set'):
+        id = IntegerField(label='ID', read_only=True)
+        ingredient = IngredientSerializer(label='name'):
+            name = CharField(max_length=100, validators=[<UniqueValidator(queryset=Ingredient.objects.all())>])
+            photo = CharField(allow_blank=True, allow_null=True, max_length=200, required=False)
+        quantity = FloatField(min_value=0)
+        measure = ChoiceField(choices=[('Gramos', 'g'), ('Kilogramos', 'kg'), ('Tazas', 'taza'), ('Cucharas', 'cuchara'), ('Cucharitas', 'cucharita'), ('Litros', 'lts'), ('Partes', 'partes'), ('Unidades', 'cantidad'), ('Al gusto', 'al_gusto'), ('Otro', 'other')])
+        optional = BooleanField(required=False)
+        customMeasure = CharField(allow_blank=True, allow_null=True, label='CustomMeasure', max_length=200, required=False)
+        alternatives = IngredientRequiredAlternativeSerializer(many=True, source='ingredientrequiredalternative_set'):
+            id = IntegerField(label='ID', read_only=True)
+            ingredient = IngredientSerializer(label='name'):
+                name = CharField(max_length=100, validators=[<UniqueValidator(queryset=Ingredient.objects.all())>])
+                photo = CharField(allow_blank=True, allow_null=True, max_length=200, required=False)
+            quantity = FloatField(min_value=0)
+            measure = ChoiceField(choices=[('Gramos', 'g'), ('Kilogramos', 'kg'), ('Tazas', 'taza'), ('Cucharas', 'cuchara'), ('Cucharitas', 'cucharita'), ('Litros', 'lts'), ('Partes', 'partes'), ('Unidades', 'cantidad'), ('Al gusto', 'al_gusto'), ('Otro', 'other')])
+            optional = BooleanField(required=False)
+            customMeasure = CharField(allow_blank=True, allow_null=True, label='CustomMeasure', max_length=200, required=False)
+    steps = StepSerializer(many=True, source='step_set'):
+        id = IntegerField(label='ID', read_only=True)
+        text = CharField(max_length=200)
+        optional = BooleanField(required=False)
+        photo = CharField(allow_blank=True, allow_null=True, max_length=200, required=False)
+        order = IntegerField()
